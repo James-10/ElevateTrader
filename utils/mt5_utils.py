@@ -2,13 +2,11 @@ import MetaTrader5 as mt5
 import configparser
 import pandas as pd
 from datetime import datetime as dt
-from journaling.journal import TradeJournal
 import sys
 
 
 config = configparser.ConfigParser()
 config.read("config.ini")
-journal = TradeJournal()
 
 
 class UtilsMT5:

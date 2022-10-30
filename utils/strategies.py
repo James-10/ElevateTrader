@@ -34,22 +34,23 @@ class Strategies:
         rsi = i.i_rsi(symbol, time_frame, period, ma_type)
         # sma = i.i_sma(self, symbol, time_frame, period, price_type)
 
-        print(f"RSI_{period}: {rsi}")
-        if rsi > 70:
-            positions = mt5.positions_get(symbol=symbol)
-            if len(positions) == 0:
-                signal = "sell"
-                trade_type, symbol, lots, sl_points, rr = utils.get_lot_size(
-                    signal, sl_points, risk_perc, symbol, rr
-                )
-                utils.place_order(trade_type, symbol, lots, sl_points, rr)
-                print(f"Successfully opened a {signal} order")
-        elif rsi < 30:
-            positions = mt5.positions_get(symbol=symbol)
-            if len(positions) == 0:
-                signal = "buy"
-                trade_type, symbol, lots, sl_points, rr = utils.get_lot_size(
-                    signal, 400, 2, symbol, rr
-                )
-                utils.place_order(trade_type, symbol, lots, sl_points, rr)
-                print(f"Successfully opened a {signal} order")
+        while True:
+            print(f"RSI_{period}: {rsi}")
+            if rsi > 70:
+                positions = mt5.positions_get(symbol=symbol)
+                if len(positions) == 0:
+                    signal = "sell"
+                    trade_type, symbol, lots, sl_points, rr = utils.get_lot_size(
+                        signal, sl_points, risk_perc, symbol, rr
+                    )
+                    utils.place_order(trade_type, symbol, lots, sl_points, rr)
+                    print(f"Successfully opened a {signal} order")
+            elif rsi < 30:
+                positions = mt5.positions_get(symbol=symbol)
+                if len(positions) == 0:
+                    signal = "buy"
+                    trade_type, symbol, lots, sl_points, rr = utils.get_lot_size(
+                        signal, 400, 2, symbol, rr
+                    )
+                    utils.place_order(trade_type, symbol, lots, sl_points, rr)
+                    print(f"Successfully opened a {signal} order")
