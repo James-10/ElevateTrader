@@ -35,7 +35,6 @@ class Strategies:
         # sma = i.i_sma(self, symbol, time_frame, period, price_type)
 
         while True:
-            print(f"RSI_{period}: {rsi}")
             if rsi > 70:
                 positions = mt5.positions_get(symbol=symbol)
                 if len(positions) == 0:

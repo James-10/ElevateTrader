@@ -1,0 +1,1 @@
+1. Only trade EUR and US pairs for liquidity.

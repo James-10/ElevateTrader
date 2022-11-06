@@ -3,5 +3,3 @@ from . import (
     mt5_utils,
     strategies
 )
-
-from strategies import Strategies

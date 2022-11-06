@@ -3,10 +3,12 @@ import configparser
 import pandas as pd
 from datetime import datetime as dt
 import sys
+import os
 
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+config_path = os.path.dirname(os.path.dirname(__file__))
+config.read(f"{config_path}/config.ini")
 
 
 class UtilsMT5:
