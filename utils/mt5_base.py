@@ -14,15 +14,66 @@ class ElevateMT5:
         self.login = login
         self.password = password
         self.server = server
+        self.__mt5_init()
 
-    def mt5_init(self):
+    def __mt5_init(self):
         if not mt5.initialize(
             path=self.path, login=int(self.login), password=self.password, server=self.server
         ):
             print("initialize() failed, error code =", mt5.last_error())
             quit()
+    
+    def place_order(
+            self,
+            trade_type, 
+            symbol,
+            sl_points,
+            rr, 
+            risk_perc):
+        """Place an order with desired stop loss points distance from the current ask or bid price
 
-    def get_stop_loss(self, trade_type, symbol, order_price, points):
+        trade_type: buy/sell
+        symbol: one of the trading pairs supported by the broker
+        sl_points: points distance from entry point
+        risk_perc:  default 1%
+        rr: risk:reward ratio
+        """
+
+        vol = self._get_lot_size(trade_type, symbol, sl_points, risk_perc, rr)
+        order_price = self._set_order_price(trade_type, symbol)
+        order_type = self._set_order_type(trade_type)
+        stop_loss = self._get_stop_loss(order_type, symbol, order_price, sl_points)
+        take_profit = self._get_take_profit(
+            order_type, symbol, order_price, rr, sl_points
+        )
+        self._validate_sl_tp(trade_type, order_price, stop_loss, take_profit)
+
+        print(f"stop loss at : {round(stop_loss, 5)}")
+        print(f"take profit at : {round(take_profit, 5)}")
+
+
+        order_result = mt5.order_send(
+            action=mt5.TRADE_ACTION_DEAL,
+            symbol=symbol,
+            volume=vol,
+            price=order_price,
+            sl=stop_loss,
+            tp=take_profit,
+            type=order_type,
+        )
+        print(f"{symbol} order sent with lot size {vol} at {round(order_price, 5)}")
+        if not order_result:
+            print("Order could not be placed")
+            sys.exit(1)
+
+        # order_place_dict = order_result._asdict()
+        # request_dict = order_place_dict["request"]._asdict()
+        # req_vals = [request_dict[key] for key in request_dict]
+        # sql_values = [order_place_dict[key] for key in order_place_dict][:3] + req_vals + [trade_reason]
+
+        return order_result
+
+    def _get_stop_loss(self, trade_type, symbol, order_price, points):
 
         if trade_type == mt5.ORDER_TYPE_BUY:
             if "JPY" in symbol:
@@ -37,7 +88,7 @@ class ElevateMT5:
 
         return stop_loss
 
-    def get_mt5_time_frame(self, time_frame):
+    def _get_mt5_time_frame(self, time_frame):
         """This function takes the core Metatrader application time_frames( M1, M5, M15, H1, H4, D1, W1) and converts it into mt5 code time_frames"""
 
         if time_frame.lower() == "m1":
@@ -60,7 +111,7 @@ class ElevateMT5:
         return mt5_time_frame
 
 
-    def get_take_profit(self, trade_type, symbol, order_price, sl_points, risk_reward):
+    def _get_take_profit(self, trade_type, symbol, order_price, sl_points, risk_reward):
 
         if trade_type == mt5.ORDER_TYPE_BUY:
             if "JPY" in symbol:
@@ -83,8 +134,8 @@ class ElevateMT5:
 
         return take_profit
 
-    @staticmethod
-    def validate_sl_tp(trade_type, order_price, stop_loss, take_profit):
+
+    def _validate_sl_tp(self, trade_type, order_price, stop_loss, take_profit):
 
         if trade_type.lower() == "buy":
             if stop_loss > order_price:
@@ -101,8 +152,8 @@ class ElevateMT5:
                 print("Invalid Take Profit")
                 exit(1)
 
-    @staticmethod
-    def set_order_price(trade_type, symbol):
+
+    def _set_order_price(trade_type, symbol):
         if trade_type.lower() == "buy":
             order_price = mt5.symbol_info_tick(symbol).ask
         elif trade_type.lower() == "sell":
@@ -112,8 +163,8 @@ class ElevateMT5:
             exit(0)
         return order_price
 
-    @staticmethod
-    def set_order_type(trade_type):
+
+    def _set_order_type(trade_type):
         if trade_type.lower() == "buy":
             order_type = mt5.ORDER_TYPE_BUY
         elif trade_type.lower() == "sell":
@@ -123,7 +174,8 @@ class ElevateMT5:
             exit(1)
         return order_type
 
-    def get_currency_pair(self, base):
+
+    def _get_currency_pair(self, base):
         quote = str(mt5.account_info().currency)
         base = str(base)
         symbols = [symb.name for symb in mt5.symbols_get()]
@@ -144,7 +196,7 @@ class ElevateMT5:
         return symbol, reciprocate
 
 
-    def symbol_std_lot_pip(self, symbol, order_price):
+    def _symbol_std_lot_pip(self, symbol, order_price):
         """This function gets the pip value for the symbol when the volume is 1 standard lot (1.00)"""
 
         if "JPY" not in symbol:
@@ -156,7 +208,8 @@ class ElevateMT5:
 
         return symbol_std_lot_pip
 
-    def get_pip_value(self, trade_type, symbol, order_price):
+
+    def _get_pip_value(self, trade_type, symbol, order_price):
         """This function returns the standard lot pip value of a trading_pair in the account's currency value.
         e.g for GBPCAD the pip value will be returned in USD if the account is in USD"""
 
@@ -177,52 +230,8 @@ class ElevateMT5:
 
         return acc_curr_pip_value
 
-    def place_order(self, trade_type, symbol, sl_points, trade_reason, rr=2, risk_perc=1):
-        """Place an order with desired stop loss points distance from the current ask or bid price
 
-        trade_type: buy/sell
-        symbol: one of the trading pairs supported by the broker
-        sl_points: points distance from entry point
-        risk_perc:  default 1%
-        rr: risk:reward ratio
-        """
-
-        vol = self.get_lot_size(trade_type, symbol, sl_points, risk_perc, rr)
-        order_price = self.set_order_price(trade_type, symbol)
-        order_type = self.set_order_type(trade_type)
-        stop_loss = self.get_stop_loss(order_type, symbol, order_price, sl_points)
-        take_profit = self.get_take_profit(
-            order_type, symbol, order_price, rr, sl_points
-        )
-        self.validate_sl_tp(trade_type, order_price, stop_loss, take_profit)
-
-        print(f"stop loss at : {round(stop_loss, 5)}")
-        print(f"take profit at : {round(take_profit, 5)}")
-
-        # trade_comment = journal.trade_reason(trade_reason)
-        # print(trade_comment)
-
-        order_result = mt5.order_send(
-            action=mt5.TRADE_ACTION_DEAL,
-            symbol=symbol,
-            volume=vol,
-            price=order_price,
-            sl=stop_loss,
-            tp=take_profit,
-            type=order_type,
-        )
-        print(f"{symbol} order sent with lot size {vol} at {round(order_price, 5)}")
-        if not order_result:
-            print("Order could not be placed")
-            sys.exit(1)
-
-        order_place_dict = order_result._asdict()
-        request_dict = order_place_dict["request"]._asdict()
-        req_vals = [request_dict[key] for key in request_dict]
-        sql_values = [order_place_dict[key] for key in order_place_dict][:3] + req_vals + [trade_reason]
-        # journal.insert_into(sql_values)
-
-    def get_lot_size(self, trade_type, symbol, sl_points, risk_perc, rr):
+    def _get_lot_size(self, trade_type, symbol, sl_points, risk_perc, rr):
 
         account_size = mt5.account_info().balance
         order_price = self.set_order_price(trade_type, symbol)
@@ -234,8 +243,8 @@ class ElevateMT5:
 
         return lots
 
-    @staticmethod
-    def close_all_orders():
+
+    def _close_all_orders():
         orders = {}
         order_results = []
         for position in mt5.positions_get():
@@ -261,8 +270,8 @@ class ElevateMT5:
         for i in orders:
             print(f"{i} : {orders[i]}")
 
-    @staticmethod
-    def close_orders_for_symbol(symbol):
+
+    def _close_orders_for_symbol(symbol):
         tickets = []
         for position in mt5.positions_get(symbol=symbol):
 
@@ -286,16 +295,3 @@ class ElevateMT5:
 
         print(f"Successfully closed position(s) {tickets} on {symbol}")
 
-    def symbol_rates_df(self, symbol, time_frame, bars_count, start_pos=0):
-
-        mt5_time_frame = self.get_mt5_time_frame(time_frame)
-
-        bars = mt5.copy_rates_from_pos(symbol, mt5_time_frame, start_pos, bars_count)
-        columns = ["time", "open", "high", "low", "close"]
-
-        df = pd.DataFrame(bars, columns=columns)
-        df["time"] = pd.to_datetime(df["time"], unit="s")
-        df.set_index("time", drop=True, inplace=True)
-        df.sort_values(by="time", ascending=False)
-
-        return df

@@ -1,6 +1,6 @@
-from utils.indicators import Indicators
+from indicators.indicators import Indicators
 from utils.mt5_base import ElevateMT5
-from utils.strategies import Strategies
+from algorithms.strategies import Strategies
 import MetaTrader5 as mt5
 from datetime import datetime as dt
 

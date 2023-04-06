@@ -1,8 +1,8 @@
-from .indicators import Indicators
-from .mt5_utils import UtilsMT5
+from ..indicators.indicators import Indicators
+from ..utils.mt5_base import ElevateMT5
 import MetaTrader5 as mt5
 
-utils = UtilsMT5()
+utils = ElevateMT5()
 i = Indicators()
 
 
@@ -53,3 +53,18 @@ class Strategies:
                 )
                 utils.place_order(trade_type, symbol, lots, sl_points, rr)
                 print(f"Successfully opened a {signal} order")
+
+
+def _symbol_rates_df(self, symbol, time_frame, bars_count, start_pos=0):
+
+    mt5_time_frame = self.get_mt5_time_frame(time_frame)
+
+    bars = mt5.copy_rates_from_pos(symbol, mt5_time_frame, start_pos, bars_count)
+    columns = ["time", "open", "high", "low", "close"]
+
+    df = pd.DataFrame(bars, columns=columns)
+    df["time"] = pd.to_datetime(df["time"], unit="s")
+    df.set_index("time", drop=True, inplace=True)
+    df.sort_values(by="time", ascending=False)
+
+    return df
