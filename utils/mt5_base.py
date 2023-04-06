@@ -1,30 +1,23 @@
 import MetaTrader5 as mt5
-import configparser
 import pandas as pd
 from datetime import datetime as dt
-from journaling.journal import TradeJournal
 import sys
 
 
-config = configparser.ConfigParser()
-config.read("config.ini")
-journal = TradeJournal()
+jpy_multiplier = 1000
+other_multiplier = 100000
+std_lot_contract = 100000
 
+class ElevateMT5:
+    def __init__(self, app_path: str, login: str, password: str, server: str):
+        self.path = app_path
+        self.login = login
+        self.password = password
+        self.server = server
 
-class UtilsMT5:
-    def __init__(self):
-        self.jpy_multiplier = 1000
-        self.other_multiplier = 100000
-        self.std_lot_contract = 100000
-
-    def mt5_init(self, environment):
-        path = config[environment]["path"]
-        login = config[environment]["login"]
-        password = config[environment]["password"]
-        server = config[environment]["server"]
-
+    def mt5_init(self):
         if not mt5.initialize(
-            path=path, login=int(login), password=password, server=server
+            path=self.path, login=int(self.login), password=self.password, server=self.server
         ):
             print("initialize() failed, error code =", mt5.last_error())
             quit()
@@ -65,6 +58,7 @@ class UtilsMT5:
             print("Timeframe not supported")
             exit(1)
         return mt5_time_frame
+
 
     def get_take_profit(self, trade_type, symbol, order_price, sl_points, risk_reward):
 
@@ -149,6 +143,7 @@ class UtilsMT5:
             reciprocate = False
         return symbol, reciprocate
 
+
     def symbol_std_lot_pip(self, symbol, order_price):
         """This function gets the pip value for the symbol when the volume is 1 standard lot (1.00)"""
 
@@ -204,8 +199,8 @@ class UtilsMT5:
         print(f"stop loss at : {round(stop_loss, 5)}")
         print(f"take profit at : {round(take_profit, 5)}")
 
-        trade_comment = journal.trade_reason(trade_reason)
-        print(trade_comment)
+        # trade_comment = journal.trade_reason(trade_reason)
+        # print(trade_comment)
 
         order_result = mt5.order_send(
             action=mt5.TRADE_ACTION_DEAL,
@@ -225,7 +220,7 @@ class UtilsMT5:
         request_dict = order_place_dict["request"]._asdict()
         req_vals = [request_dict[key] for key in request_dict]
         sql_values = [order_place_dict[key] for key in order_place_dict][:3] + req_vals + [trade_reason]
-        journal.insert_into(sql_values)
+        # journal.insert_into(sql_values)
 
     def get_lot_size(self, trade_type, symbol, sl_points, risk_perc, rr):
 
