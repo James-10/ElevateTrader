@@ -204,8 +204,8 @@ class UtilsMT5:
         print(f"stop loss at : {round(stop_loss, 5)}")
         print(f"take profit at : {round(take_profit, 5)}")
 
-        trade_comment = journal.trade_reason(trade_reason)
-        print(trade_comment)
+        # trade_comment = journal.trade_reason(trade_reason)
+        # print(trade_comment)
 
         order_result = mt5.order_send(
             action=mt5.TRADE_ACTION_DEAL,
@@ -225,7 +225,7 @@ class UtilsMT5:
         request_dict = order_place_dict["request"]._asdict()
         req_vals = [request_dict[key] for key in request_dict]
         sql_values = [order_place_dict[key] for key in order_place_dict][:3] + req_vals + [trade_reason]
-        journal.insert_into(sql_values)
+        # journal.insert_into(sql_values)
 
     def get_lot_size(self, trade_type, symbol, sl_points, risk_perc, rr):
 
@@ -291,7 +291,7 @@ class UtilsMT5:
 
         print(f"Successfully closed position(s) {tickets} on {symbol}")
 
-    def symbol_rates_df(self, symbol, time_frame, bars_count, start_pos=0):
+    def get_symbol_rates_df(self, symbol, time_frame, bars_count, start_pos=0):
 
         mt5_time_frame = self.get_mt5_time_frame(time_frame)
 
