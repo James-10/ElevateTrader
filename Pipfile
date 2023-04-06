@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 metatrader5 = "*"
+SQLAlchemy = "~=2.0.9"
 
 [dev-packages]
 
