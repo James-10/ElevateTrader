@@ -16,7 +16,13 @@ response = requests.get(
 symbol_data : List[Dict] = response.json()
 
 
-class Symbols(Enum):
+class SymbolsEnum(Enum):
     
     for sym_dict in symbol_data:
         locals()[sym_dict.get("symbol")] = sym_dict.get("symbol")
+
+
+class OrderTypes(Enum):
+    "Distinct order types"
+    buy = "buy"
+    sell = "sell"
