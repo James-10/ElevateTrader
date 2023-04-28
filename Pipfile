@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 metatrader5 = "*"
 SQLAlchemy = "~=2.0.9"
+python-json-logger = "*"
 
 [dev-packages]
 
