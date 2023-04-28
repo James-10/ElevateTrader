@@ -1,0 +1,21 @@
+version: 1
+disable_existing_loggers: no
+formatters:
+  json:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(lineno)d - %(message)s'
+    class: pythonjsonlogger.jsonlogger.JsonFormatter
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: simple
+    stream: ext://sys.stdout
+loggers:
+  root:
+    level: DEBUG
+    handlers: [console]
+  elevate_trader:
+    level: DEBUG
+    handlers: [console]
+    propagate: no
+    qualname: elevate_trader

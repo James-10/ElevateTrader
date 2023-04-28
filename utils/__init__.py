@@ -1,5 +1,5 @@
+from ..algorithms import strategies
+from ..indicators import indicators
 from . import (
-    indicators,
-    mt5_utils,
-    strategies
+    mt5_utils
 )
