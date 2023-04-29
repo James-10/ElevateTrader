@@ -22,7 +22,7 @@ class SymbolsEnum(Enum):
         locals()[sym_dict.get("symbol")] = sym_dict.get("symbol")
 
 
-class OrderTypes(Enum):
+class OrderTypesEnum(Enum):
     "Distinct order types"
     buy = "buy"
     sell = "sell"

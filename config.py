@@ -8,6 +8,7 @@ from pydantic import (
 class Settings(BaseSettings):
     auth_key: str
     symbols_api_key: str
+    database_uri: str = ""
 
     class Config:
         env_file = ".env"
