@@ -1,12 +1,16 @@
-import MetaTrader5 as mt5
-import pandas as pd
-from datetime import datetime as dt
 import sys
+from datetime import datetime as dt
 
+import MetaTrader5 as mt5
 
-jpy_multiplier = 1000
-other_multiplier = 100000
-std_lot_contract = 100000
+from config import Config
+from utils.logging import logger_init
+
+LOGGER = logger_init
+
+jpy_multiplier = Config.jpy_multiplier
+other_multiplier = Config.other_multiplier
+std_lot_contract = Config.std_lot_contract
 
 class ElevateMT5:
     def __init__(self, app_path: str, login: str, password: str, server: str):
