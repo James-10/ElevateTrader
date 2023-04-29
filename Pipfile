@@ -8,6 +8,7 @@ metatrader5 = "*"
 SQLAlchemy = "~=2.0.9"
 python-json-logger = "*"
 pydantic = "~=1.10.7"
+alembic =  "~=1.10.4"
 
 [dev-packages]
 
