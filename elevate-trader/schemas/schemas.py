@@ -26,3 +26,9 @@ class OrderTypesEnum(Enum):
     "Distinct order types"
     buy = "buy"
     sell = "sell"
+
+
+class AlgosEnum(Enum):
+    mean_reversion = "mean_reversion"
+    trending = "trending"
+    high_frequency= "high_frequency"
