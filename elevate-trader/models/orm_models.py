@@ -2,7 +2,7 @@ from sqlalchemy import Column, Enum, Integer, Time, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from schemas.schemas import SymbolsEnum, OrderTypesEnum
+from schemas.schemas import AlgosEnum, SymbolsEnum, OrderTypesEnum
 
 Base = declarative_base()
 
@@ -24,4 +24,10 @@ def Orders(Base):
     symbol_id = Column(Integer, ForeignKey("symbols.id"))
     
     symbols = relationship("Symbols", back_populates="orders")
-    
+
+
+def Algorithms(Base):
+    __tablename__ = "algorithms"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    type = Column(Enum(AlgosEnum), nullable=False)
