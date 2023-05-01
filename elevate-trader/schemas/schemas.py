@@ -2,24 +2,35 @@ import requests
 from enum import Enum
 from typing import List, Dict
 
-symbols_endpoint = "https://api.twelvedata.com/forex_pairs"
-api_key = ""
+from config import Config
 
-data = {}
-
-response = requests.get(
-    url=symbols_endpoint,
-    data=data,
-    headers={f"Authorization={api_key}"}
-)
-
-symbol_data : List[Dict] = response.json()
-
+SYMBOLS_CACHE = {}
 
 class SymbolsEnum(Enum):
-    
-    for sym_dict in symbol_data:
-        locals()[sym_dict.get("symbol")] = sym_dict.get("symbol")
+
+    #Majors
+    EURUSD = "EURUSD"
+    GBPUSD = "GBPUSD"
+    AUDUSD = "AUDUSD"
+    NZDUSD = "NZDUSD"
+    USDCAD = "USDCAD"
+    USDCHF = "USDCHF"
+    USDJPY = "USDJPY"
+
+    #Exotic
+    USDZAR = "USDZAR"   
+
+    #Commodities
+    XAUUSD = "XAUUSD"
+    XAGUSD = "XAGUSD"
+    USOIL = "USOIL"
+    UKOIL = "UKOIL"
+
+    #Cryptos
+    BTCUSD = "BTCUSD"
+    ETHUSD = "ETHUSD"
+    LTCUSD = "LTCUSD"
+    XRPUSD = "XRPUSD"
 
 
 class OrderTypesEnum(Enum):

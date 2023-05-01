@@ -6,8 +6,8 @@ from pydantic import (
 
 
 class Settings(BaseSettings):
-    auth_key: str
-    symbols_api_key: str
+    auth_key: str = ""
+    symbols_api_key: str = ""
     database_uri: str = ""
     jpy_multiplier: int = 1000
     other_multiplier: int = 100000

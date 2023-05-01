@@ -2,7 +2,7 @@ from sqlalchemy import Column, Enum, Integer, Time, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from schemas.schemas import AlgosEnum, SymbolsEnum, OrderTypes
+from schemas.schemas import AlgosEnum, SymbolsEnum, OrderTypesEnum
 
 Base = declarative_base()
 
@@ -18,7 +18,7 @@ def Orders(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(Enum(OrderTypes), nullable=False)
+    type = Column(Enum(OrderTypesEnum), nullable=False)
     lot_size = Column(Float, nullable=False)
     time = Column(Time, nullable=False)
     symbol_id = Column(Integer, ForeignKey("symbols.id"))
