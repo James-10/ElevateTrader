@@ -213,7 +213,6 @@
             ],
             "markers": "python_full_version >= '3.7.0'",
             "version": "==3.1.0"
-        },
         "cryptography": {
             "hashes": [
                 "sha256:05dc219433b14046c476f6f09d7636b92a1c3e5808b9a6536adf4932b3b2c440",
