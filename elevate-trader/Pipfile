@@ -25,3 +25,4 @@ python_full_version = "3.10.2"
 
 env = "cp .env.example .env"
 config = "python config.py"
+docker = "powershell.exe scripts/run-docker.ps1"
