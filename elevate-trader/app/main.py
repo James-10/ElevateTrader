@@ -12,3 +12,6 @@ from schemas.schemas import SymbolsEnum, OrderTypesEnum
 
 LOGGER = logger_init()
 
+
+if __name__ == "__main__":
+    LOGGER.info("Hello from main")
