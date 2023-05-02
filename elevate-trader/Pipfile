@@ -9,8 +9,9 @@ SQLAlchemy = "~=2.0.9"
 python-json-logger = "*"
 pydantic = "~=1.10.7"
 alembic =  "~=1.10.4"
-azure-keyvault-keys = "~=4.7.0"
+azure-keyvault-secrets = "~=4.7.0"
 azure-identity = "~=1.12.0"
+python-dotenv =  "~=0.21.0"
 
 [dev-packages]
 
@@ -21,3 +22,4 @@ python_full_version = "3.10.2"
 [scripts]
 
 env = "cp .env.example .env"
+config = "python config.py"
